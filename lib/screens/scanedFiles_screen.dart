@@ -2,106 +2,143 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:share/share.dart';
+import 'package:text_recognition_app/utilities/size_config.dart';
+import 'package:text_recognition_app/utilities/styles.dart';
+import 'package:flutter/services.dart';
 
-
+// ignore: must_be_immutable
 class ScannedFilesScreen extends StatefulWidget {
+  String scannedText;
+
+  ScannedFilesScreen({this.scannedText});
+
   @override
   _ScannedFilesScreenState createState() => _ScannedFilesScreenState();
 }
 
-class _ScannedFilesScreenState extends State<ScannedFilesScreen> with SingleTickerProviderStateMixin {
-  /*bool isOpened = false;
-  AnimationController _animationController;
-  Animation<Color> _buttonColor;
-  Animation<double> _animateIcon;
-  Animation<double> _translateButton;
-  Curve _curve = Curves.easeOut;
-  double _fabHeight = 56.0;
-
-  @override
-  void initState() {
-    _animationController = AnimationController(vsync: this,duration:
-    Duration(milliseconds: 500))
-                           ..addListener(() {
-                             setState(() {});
-                           });
-    _animateIcon = Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
-    _buttonColor = ColorTween(
-      begin: Colors.blue,
-      end: Colors.red
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Interval(0.00, 1.00,curve: Curves.linear),
-    ));
-    _translateButton = Tween<double>(begin: _fabHeight, end: -14.0).
-    animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Interval(0.00, 0.75,
-          curve: _curve ),
-    ));
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  animate(){
-    if(!isOpened){
-      _animationController.forward();
-    }else{
-      _animationController.reverse();
-    }
-    isOpened = !isOpened;
-  }
-
-  Widget add(){
-    return Container(
-      child: FloatingActionButton(
-        onPressed: (){},
-        tooltip: 'Add',child:Icon(Icons.add),
-      ),
-    );
-  }
-  Widget image(){
-    return Container(
-      child: FloatingActionButton(
-        onPressed: (){},
-        tooltip: 'image',child:Icon(Icons.image),
-      ),
-    );
-  }
-
-  Widget inbox(){
-    return Container(
-      child: FloatingActionButton(
-        onPressed: (){},
-        tooltip: 'Inbox',child:Icon(Icons.inbox),
-      ),
-    );
-  }
-
-  Widget toggle(){
-    return Container(
-      child: FloatingActionButton(
-        backgroundColor: _buttonColor.value,
-        onPressed: animate,
-        tooltip: 'Toggle',
-        child: AnimatedIcon(icon: AnimatedIcons.menu_close, progress: _animateIcon),
-      ),
-    );
-  }*/
+class _ScannedFilesScreenState extends State<ScannedFilesScreen>
+    with SingleTickerProviderStateMixin {
 
 
+
+  /// Map de give IconData to the drop down item icon
+  Map<String, IconData> iconDropDown = {
+    'Save': Icons.save,
+    'Text Settings': Icons.settings,
+  };
+  String dropdownValue = 'Save';
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return SafeArea(
+      key: _scaffoldKey,
       child: Scaffold(
+        backgroundColor: kColor,
         appBar: AppBar(
-          backgroundColor: Colors.yellow,
-
+          backgroundColor: kColor,
+          centerTitle: true,
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(40),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: SizeConfig.blockSizeHorizontal * 30,
+                  child: FlatButton(
+                    height: 30.0,
+                    onPressed: () {
+                      Get.off(ScannedFilesScreen());
+                    },
+                    color: kYellowColor,
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(20.0)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          child: Icon(Icons.translate),
+                        ),
+                        Expanded(child: Center(child: Text('Translate')))
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () {
+                Get.back();
+              }),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: DropdownButton<String>(
+                icon: Icon(
+                  Icons.menu,
+                  color: Colors.white,
+                ),
+                iconSize: 24,
+                elevation: 0,
+                dropdownColor: Colors.white,
+                underline: SizedBox(),
+                style: TextStyle(color: Colors.grey,
+                    fontWeight: FontWeight.bold),
+                onChanged: (String newValue) async {
+                  setState(() {
+                    dropdownValue = newValue;
+                  });
+                  print(newValue);
+                },
+                items: <String>['Save', 'Text Settings']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(
+                          iconDropDown[value],
+                          color: Colors.grey,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left:4.0),
+                          child: Text(value),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            )
+          ],
+          title: Text("Scan Results", style: GoogleFonts.poppins()),
+          elevation: 0.0,
+        ),
+        body: SingleChildScrollView(
+          child: Container(
+              height: SizeConfig.blockSizeVertical * 90,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius:
+                      BorderRadius.only(topLeft: Radius.circular(20))),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "${widget.scannedText}",
+                        style: GoogleFonts.poppins(),
+                      ),
+                    ),
+                  ),
+                ],
+              )),
         ),
         floatingActionButton: SpeedDial(
           // both default to 16
@@ -132,22 +169,21 @@ class _ScannedFilesScreenState extends State<ScannedFilesScreen> with SingleTick
                 backgroundColor: Colors.red,
                 label: 'PDF',
                 labelStyle: TextStyle(fontSize: 18.0),
-                onTap: () => print('FIRST CHILD')
-            ),
+                onTap: () => print('FIRST CHILD')),
             SpeedDialChild(
               child: Icon(Icons.share),
-              backgroundColor: Colors.blue,
+              backgroundColor: Colors.green,
               label: 'Share',
               labelStyle: TextStyle(fontSize: 18.0),
-              onTap: () => print('SECOND CHILD'),
-            ),
-            SpeedDialChild(
-              child: Icon(Icons.copy),
-              backgroundColor: Colors.green,
-              label: 'Copy',
-              labelStyle: TextStyle(fontSize: 18.0),
-              onTap: () => print('THIRD CHILD'),
-            ),
+              onTap: (){
+                final RenderBox box = context.findRenderObject();
+                Share.share("${widget.scannedText}",
+                    subject: "Scanned Results",
+                    sharePositionOrigin:
+                    box.localToGlobal(Offset.zero) &
+                    box.size);
+              },
+            )
           ],
         ),
       ),

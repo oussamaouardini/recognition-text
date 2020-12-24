@@ -121,13 +121,13 @@ class _AnimationTransferScreenState extends State<AnimationTransferScreen> {
                           fontSize: SizeConfig.blockSizeHorizontal * 4)),
                 ):SizedBox(),
 
-                Center(
+                isLoading==false?Center(
                     child: Container(
                       margin: EdgeInsets.only(top:8.0),
                       width: SizeConfig.blockSizeHorizontal * 40,
                       child: FlatButton(
                         onPressed: (){
-                          Get.off(ScannedFilesScreen());
+                          Get.off(ScannedFilesScreen(scannedText:scannedText));
                         },
                         color: kYellowColor,
                         shape: new RoundedRectangleBorder(
@@ -147,7 +147,7 @@ class _AnimationTransferScreenState extends State<AnimationTransferScreen> {
                           ],
                         ),
                       ),
-                    ),),
+                    ),):SizedBox(),
                 Center(
                     child: RaisedButton(
                       shape: RoundedRectangleBorder(
