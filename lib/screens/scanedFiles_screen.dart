@@ -5,8 +5,13 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:share/share.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:sweetalert/sweetalert.dart';
+import 'package:text_recognition_app/blocks/DBProvider_block.dart';
+import 'package:text_recognition_app/models/ScanResult.dart';
 import 'package:text_recognition_app/utilities/size_config.dart';
 import 'package:text_recognition_app/utilities/styles.dart';
 import 'package:pdf/pdf.dart';
@@ -30,8 +35,10 @@ class _ScannedFilesScreenState extends State<ScannedFilesScreen>
     'Save': Icons.save,
     'Text Settings': Icons.settings,
   };
+  String errorText = "";
   String dropdownValue = 'Save';
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  TextEditingController _textEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +102,49 @@ class _ScannedFilesScreenState extends State<ScannedFilesScreen>
                   setState(() {
                     dropdownValue = newValue;
                   });
-                  print(newValue);
+
+                  if (dropdownValue == "Save") {
+                    ///create database table if it does not exist
+                    Alert(
+                        context: context,
+                        title: "Save File",
+                        content: Column(
+                          children: <Widget>[
+                            TextField(
+                              controller: _textEditingController,
+                              onChanged: (value) {
+                                value.length > 3
+                                    ? errorText = ""
+                                    : errorText =
+                                        "title length must be longer 3 characters";
+                              },
+                              decoration: InputDecoration(
+                                  icon: Icon(Icons.text_fields),
+                                  labelText: 'title',
+                                  errorMaxLines: 1,
+                                  errorText: errorText),
+                            ),
+                          ],
+                        ),
+                        buttons: [
+                          DialogButton(
+                            onPressed: errorText == ""
+                                ? () {
+                                    ScanResult(null, null).save(
+                                        "${_textEditingController.text}",
+                                        widget.scannedText);
+                                    _textEditingController.clear();
+                                    Navigator.pop(context);
+                                  }
+                                : null,
+                            child: Text(
+                              "Save",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 20),
+                            ),
+                          )
+                        ]).show();
+                  }
                 },
                 items: <String>['Save', 'Text Settings']
                     .map<DropdownMenuItem<String>>((String value) {

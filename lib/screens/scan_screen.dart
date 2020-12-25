@@ -5,11 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:text_recognition_app/blocks/DBProvider_block.dart';
+import 'package:text_recognition_app/controllers/scanResult_controller.dart';
+import 'package:text_recognition_app/models/ScanResult.dart';
 import 'package:text_recognition_app/screens/animation_transfer_file.dart';
 import 'package:text_recognition_app/screens/scanedFiles_screen.dart';
 import 'package:text_recognition_app/utilities/size_config.dart';
 import 'package:text_recognition_app/utilities/styles.dart';
-
 
 class ScanScreen extends StatefulWidget {
   @override
@@ -22,22 +25,41 @@ class _ScanScreenState extends State<ScanScreen> {
   bool isImage = false;
   bool isList = true;
 
-
   Future pickImage() async {
     var tempStorage = await ImagePicker.pickImage(source: ImageSource.gallery);
 
-    if(tempStorage!= null){
+    if (tempStorage != null) {
       setState(() {
         pickedImage = tempStorage;
         isImage = true;
       });
-      Get.to(AnimationTransferScreen(pickedImage:pickedImage,));
-    //  Get.to(AnimationTransferScreen());
+      Get.to(AnimationTransferScreen(
+        pickedImage: pickedImage,
+      ));
     }
-
-
   }
 
+  /// Function to initialise and fetch data
+  Future initTables() async {
+    ///create database table if it does not exist
+    // await SqLiteDB().deleteTable("ScanResult");
+    bool db = await SqLiteDB().exists("ScanResult");
+    if (db == false) {
+      try {
+        ScanResult(null, null).createResultsTable();
+      } catch (e) {}
+    }
+    _scanResultController.getResultScan();
+  }
+
+  @override
+  void initState() {
+    initTables();
+    super.initState();
+  }
+
+  final ScanResultController _scanResultController =
+      Get.put(ScanResultController());
 
   @override
   Widget build(BuildContext context) {
@@ -146,8 +168,7 @@ class _ScanScreenState extends State<ScanScreen> {
                                       ),
                                       Expanded(
                                           child: Center(
-                                              child:
-                                                  Text('TAKE A PICTURE')))
+                                              child: Text('TAKE A PICTURE')))
                                     ],
                                   ),
                                 ),
@@ -173,8 +194,7 @@ class _ScanScreenState extends State<ScanScreen> {
                                         ),
                                       ),
                                       Expanded(
-                                          child: Center(
-                                              child: Text('GALLERY')))
+                                          child: Center(child: Text('GALLERY')))
                                     ],
                                   ),
                                 ),
@@ -198,15 +218,21 @@ class _ScanScreenState extends State<ScanScreen> {
         appBar: AppBar(
           backgroundColor: kColor,
           elevation: 0.0,
-          leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () {
-            Get.back();
-          }),
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Get.back();
+              }),
           actions: [
-            IconButton(icon: isList==true?Icon(Icons.view_list):Icon(Icons.grid_view), onPressed: () {
-              setState(() {
-                isList=!isList;
-              });
-            }),
+            IconButton(
+                icon: isList == true
+                    ? Icon(Icons.view_list)
+                    : Icon(Icons.grid_view),
+                onPressed: () {
+                  setState(() {
+                    isList = !isList;
+                  });
+                }),
           ],
           centerTitle: true,
           title: Text('My Scans',
@@ -225,278 +251,267 @@ class _ScanScreenState extends State<ScanScreen> {
         body: TabBarView(
           children: [
             /// My Scan
-            isList?ListView(children: [
-              Container(
-                margin: const EdgeInsets.only(left:8.0,right:8.0,top:8.0),
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                    color: kTabListColor,
-                    borderRadius: BorderRadius.circular(15.0)),
-                height: SizeConfig.blockSizeVertical * 13,
-                child: InkWell(
-                  onTap: (){
-                    Get.to(ScannedFilesScreen());
-                  },
-                  child: Row(
-                    children: [
-                      Image.asset("assets/images/1.png",width: SizeConfig.blockSizeHorizontal*30,fit: BoxFit.fill,),
-                      Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.only(left: 5.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+            isList
+                ? ListView.builder(
+                    itemCount: _scanResultController.scanListData.length,
+                    itemBuilder: (context, index) {
+                      DateTime now = DateTime.parse(_scanResultController
+                          .scanListData[index]['dateTime']
+                          .toString());
+                      String formattedDate =
+                          DateFormat('yyyy-MM-dd – kk:mm').format(now);
+                      return Container(
+                        margin: const EdgeInsets.only(
+                            left: 8.0, right: 8.0, top: 8.0),
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                            color: kTabListColor,
+                            borderRadius: BorderRadius.circular(15.0)),
+                        height: SizeConfig.blockSizeVertical * 13,
+                        child: InkWell(
+                          onTap: () {
+                            Get.to(ScannedFilesScreen());
+                          },
+                          child: Row(
                             children: [
-                              Text("Hello this is title ",
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(color: Colors.white,
-                                      fontSize: SizeConfig.blockSizeHorizontal*4.5,
-                                      fontWeight: FontWeight.bold
-                                  ),
-                                  maxLines: 1),
-                              Text(
-                                "27/12/2021",
-                                style: TextStyle(color: Colors.white),
+                              Image.asset(
+                                "assets/images/1.png",
+                                width: SizeConfig.blockSizeHorizontal * 30,
+                                fit: BoxFit.fill,
                               ),
+                              Expanded(
+                                child: Container(
+                                  margin: const EdgeInsets.only(left: 5.0),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                          _scanResultController
+                                              .scanListData[index]['name']
+                                              .toString(),
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: SizeConfig
+                                                      .blockSizeHorizontal *
+                                                  4.5,
+                                              fontWeight: FontWeight.bold),
+                                          maxLines: 1),
+                                      Text(
+                                        formattedDate,
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
                             ],
                           ),
                         ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(left:8.0,right:8.0,top:8.0),
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                    color: kTabListColor,
-                    borderRadius: BorderRadius.circular(15.0)),
-                height: SizeConfig.blockSizeVertical * 13,
-                child: InkWell(
-                  onTap: (){
-                    Get.to(ScannedFilesScreen());
-                  },
-                  child: Row(
+                      );
+                    },
+                  )
+                : GridView.count(
+                    crossAxisCount: 2,
                     children: [
-                      Image.asset("assets/images/1.png",width: SizeConfig.blockSizeHorizontal*30,fit: BoxFit.fill,),
-                      Expanded(
+                      InkWell(
+                        onTap: () {
+                          Get.to(ScannedFilesScreen());
+                        },
                         child: Container(
-                          margin: const EdgeInsets.only(left: 5.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Hello this is title ",
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(color: Colors.white,
-                                      fontSize: SizeConfig.blockSizeHorizontal*4.5,
-                                      fontWeight: FontWeight.bold
+                          decoration: BoxDecoration(
+                              color: kTabListColor,
+                              borderRadius: BorderRadius.circular(15.0)),
+                          margin: EdgeInsets.all(8.0),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Flexible(
+                                  flex: 5,
+                                  child: Image.asset(
+                                    "assets/images/1.png",
+                                    fit: BoxFit.fill,
+                                    width: double.infinity,
                                   ),
-                                  maxLines: 1),
-                              Text(
-                                "27/12/2021",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ],
+                                ),
+                                Flexible(
+                                  flex: 1,
+                                  child: Text("Hello this is title",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize:
+                                              SizeConfig.blockSizeHorizontal *
+                                                  4,
+                                          fontWeight: FontWeight.bold),
+                                      maxLines: 1),
+                                ),
+                                Flexible(
+                                  flex: 1,
+                                  child: Text(
+                                    "27/12/2021",
+                                    style: TextStyle(color: Colors.white),
+                                    maxLines: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      )
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Get.to(ScannedFilesScreen());
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: kTabListColor,
+                              borderRadius: BorderRadius.circular(15.0)),
+                          margin: EdgeInsets.all(8.0),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Flexible(
+                                  flex: 5,
+                                  child: Image.asset(
+                                    "assets/images/1.png",
+                                    fit: BoxFit.fill,
+                                    width: double.infinity,
+                                  ),
+                                ),
+                                Flexible(
+                                  flex: 1,
+                                  child: Text("Hello this is title",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize:
+                                              SizeConfig.blockSizeHorizontal *
+                                                  4,
+                                          fontWeight: FontWeight.bold),
+                                      maxLines: 1),
+                                ),
+                                Flexible(
+                                  flex: 1,
+                                  child: Text(
+                                    "27/12/2021",
+                                    style: TextStyle(color: Colors.white),
+                                    maxLines: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Get.to(ScannedFilesScreen());
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: kTabListColor,
+                              borderRadius: BorderRadius.circular(15.0)),
+                          margin: EdgeInsets.all(8.0),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Flexible(
+                                  flex: 5,
+                                  child: Image.asset(
+                                    "assets/images/1.png",
+                                    fit: BoxFit.fill,
+                                    width: double.infinity,
+                                  ),
+                                ),
+                                Flexible(
+                                  flex: 1,
+                                  child: Text("Hello this is title",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize:
+                                              SizeConfig.blockSizeHorizontal *
+                                                  4,
+                                          fontWeight: FontWeight.bold),
+                                      maxLines: 1),
+                                ),
+                                Flexible(
+                                  flex: 1,
+                                  child: Text(
+                                    "27/12/2021",
+                                    style: TextStyle(color: Colors.white),
+                                    maxLines: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Get.to(ScannedFilesScreen());
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: kTabListColor,
+                              borderRadius: BorderRadius.circular(15.0)),
+                          margin: EdgeInsets.all(8.0),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Flexible(
+                                  flex: 5,
+                                  child: Image.asset(
+                                    "assets/images/1.png",
+                                    fit: BoxFit.fill,
+                                    width: double.infinity,
+                                  ),
+                                ),
+                                Flexible(
+                                  flex: 1,
+                                  child: Text("Hello this is title",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize:
+                                              SizeConfig.blockSizeHorizontal *
+                                                  4,
+                                          fontWeight: FontWeight.bold),
+                                      maxLines: 1),
+                                ),
+                                Flexible(
+                                  flex: 1,
+                                  child: Text(
+                                    "27/12/2021",
+                                    style: TextStyle(color: Colors.white),
+                                    maxLines: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ),
-            ]
-            ):
-            GridView.count(
-              crossAxisCount: 2,
-              children: [
-                InkWell(
-                  onTap: (){
-                    Get.to(ScannedFilesScreen());
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: kTabListColor,
-                        borderRadius: BorderRadius.circular(15.0)),
-                    margin: EdgeInsets.all(8.0),
 
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            flex: 5,
-                            child: Image.asset("assets/images/1.png",fit: BoxFit.fill,
-                              width: double.infinity,),
-
-                          ),
-
-                          Flexible(
-                            flex: 1,
-                            child: Text("Hello this is title",
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(color: Colors.white,
-                                    fontSize: SizeConfig.blockSizeHorizontal*4,
-                                  fontWeight: FontWeight.bold
-                                ),
-                                maxLines: 1),
-                          ),
-                          Flexible(
-                            flex: 1,
-                            child: Text(
-                              "27/12/2021",
-                              style: TextStyle(color: Colors.white),
-                              maxLines: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: (){
-                    Get.to(ScannedFilesScreen());
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: kTabListColor,
-                        borderRadius: BorderRadius.circular(15.0)),
-                    margin: EdgeInsets.all(8.0),
-
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            flex: 5,
-                            child: Image.asset("assets/images/1.png",fit: BoxFit.fill,
-                              width: double.infinity,),
-
-                          ),
-
-                          Flexible(
-                            flex: 1,
-                            child: Text("Hello this is title",
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(color: Colors.white,
-                                    fontSize: SizeConfig.blockSizeHorizontal*4,
-                                    fontWeight: FontWeight.bold
-                                ),
-                                maxLines: 1),
-                          ),
-                          Flexible(
-                            flex: 1,
-                            child: Text(
-                              "27/12/2021",
-                              style: TextStyle(color: Colors.white),
-                              maxLines: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: (){
-                    Get.to(ScannedFilesScreen());
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: kTabListColor,
-                        borderRadius: BorderRadius.circular(15.0)),
-                    margin: EdgeInsets.all(8.0),
-
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            flex: 5,
-                            child: Image.asset("assets/images/1.png",fit: BoxFit.fill,
-                              width: double.infinity,),
-
-                          ),
-
-                          Flexible(
-                            flex: 1,
-                            child: Text("Hello this is title",
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(color: Colors.white,
-                                    fontSize: SizeConfig.blockSizeHorizontal*4,
-                                    fontWeight: FontWeight.bold
-                                ),
-                                maxLines: 1),
-                          ),
-                          Flexible(
-                            flex: 1,
-                            child: Text(
-                              "27/12/2021",
-                              style: TextStyle(color: Colors.white),
-                              maxLines: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: (){
-                    Get.to(ScannedFilesScreen());
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: kTabListColor,
-                        borderRadius: BorderRadius.circular(15.0)),
-                    margin: EdgeInsets.all(8.0),
-
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            flex: 5,
-                            child: Image.asset("assets/images/1.png",fit: BoxFit.fill,
-                              width: double.infinity,),
-
-                          ),
-
-                          Flexible(
-                            flex: 1,
-                            child: Text("Hello this is title",
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(color: Colors.white,
-                                    fontSize: SizeConfig.blockSizeHorizontal*4,
-                                    fontWeight: FontWeight.bold
-                                ),
-                                maxLines: 1),
-                          ),
-                          Flexible(
-                            flex: 1,
-                            child: Text(
-                              "27/12/2021",
-                              style: TextStyle(color: Colors.white),
-                              maxLines: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
             /// My Scan
             Container(),
           ],
@@ -600,8 +615,7 @@ class Modal {
                                 ),
                               ),
                               Expanded(
-                                  child: Center(
-                                      child: Text('TAKE A PICTURE')))
+                                  child: Center(child: Text('TAKE A PICTURE')))
                             ],
                           ),
                         ),
@@ -623,8 +637,7 @@ class Modal {
                                   child: Icon(Icons.image),
                                 ),
                               ),
-                              Expanded(
-                                  child: Center(child: Text('GALLERY')))
+                              Expanded(child: Center(child: Text('GALLERY')))
                             ],
                           ),
                         ),

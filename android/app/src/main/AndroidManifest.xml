@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.ouardini.text_recognition_app">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="text_recognition_app"
         android:icon="@mipmap/ic_launcher">
