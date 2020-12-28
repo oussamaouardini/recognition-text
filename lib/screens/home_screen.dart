@@ -1,14 +1,13 @@
 import 'dart:io';
 import 'dart:ui';
-import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/get_core.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
-import 'package:text_recognition_app/screens/animation_transfer_file.dart';
 import 'package:text_recognition_app/screens/scan_screen.dart';
 import 'package:text_recognition_app/screens/settings_screen.dart';
+import 'package:text_recognition_app/screens/translate_screen.dart';
 import 'package:text_recognition_app/utilities/size_config.dart';
 import 'package:text_recognition_app/utilities/styles.dart';
 
@@ -25,7 +24,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future pickImage() async {
     var tempStorage = await ImagePicker.pickImage(source: ImageSource.gallery);
-
     setState(() {
       pickedImage = tempStorage;
       isImage = true;
@@ -34,33 +32,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future takeImage() async {
     var tempStorage = await ImagePicker.pickImage(source: ImageSource.camera);
-
     setState(() {
       pickedImage = tempStorage;
       isImage = true;
     });
   }
 
-  Future readText() async {
-    if (pickedImage == null) {
-      ///
-    } else {
-      FirebaseVisionImage img = FirebaseVisionImage.fromFile(pickedImage);
-      TextRecognizer recognizerText = FirebaseVision.instance.textRecognizer();
-      VisionText readText = await recognizerText.processImage(img);
-
-
-     // Get.to(AnimationTransferScreen(File:pickedImage));
-
-      /*for (TextBlock block in readtext.blocks) {
-        for (TextLine line in block.lines) {
-          for (TextElement word in line.elements) {
-            print(word.text);
-          }
-        }
-      }*/
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                         Expanded(child: InkWell(onTap:(){
-                          Get.to(ScanScreen());
+                          Get.to(TranslateScreen());
                         },child: Center(child: Text('Translation'))))
                       ],
                     ),

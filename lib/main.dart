@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
-import 'package:text_recognition_app/screens/animation_transfer_file.dart';
 import 'package:text_recognition_app/screens/loading_screen.dart';
 void main() {
   runApp(MyApp());

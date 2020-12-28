@@ -1,16 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:share/share.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:sweetalert/sweetalert.dart';
-import 'package:text_recognition_app/blocks/DBProvider_block.dart';
 import 'package:text_recognition_app/models/ScanResult.dart';
 import 'package:text_recognition_app/utilities/size_config.dart';
 import 'package:text_recognition_app/utilities/styles.dart';
@@ -89,7 +85,7 @@ class _ScannedFilesScreenState extends State<ScannedFilesScreen>
               padding: const EdgeInsets.only(right: 8.0),
               child: DropdownButton<String>(
                 icon: Icon(
-                  Icons.menu,
+                  Icons.more_horiz ,
                   color: Colors.white,
                 ),
                 iconSize: 24,
