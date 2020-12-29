@@ -37,4 +37,10 @@ class ScanResult{
     final res = await scanResults.rawQuery("SELECT * FROM ScanResult");
     return res;
   }
+  /// delete a Saved Scan using raw query
+  static Future delete(int id) async {
+    var scanResults = await SqLiteDB().db;
+    final res = await scanResults.rawQuery("DELETE FROM ScanResult WHERE id=$id");
+    return res;
+  }
 }
