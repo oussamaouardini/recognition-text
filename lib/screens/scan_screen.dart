@@ -25,17 +25,36 @@ class _ScanScreenState extends State<ScanScreen> {
   bool isList = true;
 
   Future pickImage() async {
-    var tempStorage = await ImagePicker.pickImage(source: ImageSource.gallery);
+    try {
+      var tempStorage =
+          await ImagePicker.pickImage(source: ImageSource.gallery);
 
-    if (tempStorage != null) {
-      setState(() {
-        pickedImage = tempStorage;
-        isImage = true;
-      });
-      Get.to(AnimationTransferScreen(
-        pickedImage: pickedImage,
-      ));
-    }
+      if (tempStorage != null) {
+        setState(() {
+          pickedImage = tempStorage;
+          isImage = true;
+        });
+        Get.to(AnimationTransferScreen(
+          pickedImage: pickedImage,
+        ));
+      }
+    } catch (e) {}
+  }
+
+  Future tackImage() async {
+    try {
+      var tempStorage = await ImagePicker.pickImage(source: ImageSource.camera);
+
+      if (tempStorage != null) {
+        setState(() {
+          pickedImage = tempStorage;
+          isImage = true;
+        });
+        Get.to(AnimationTransferScreen(
+          pickedImage: pickedImage,
+        ));
+      }
+    } catch (e) {}
   }
 
   /// Function to initialise and fetch data
@@ -149,7 +168,7 @@ class _ScanScreenState extends State<ScanScreen> {
                               Container(
                                 width: SizeConfig.blockSizeHorizontal * 50,
                                 child: FlatButton(
-                                  onPressed: pickImage,
+                                  onPressed: tackImage,
                                   color: kYellowColor,
                                   shape: new RoundedRectangleBorder(
                                       borderRadius:
@@ -168,7 +187,11 @@ class _ScanScreenState extends State<ScanScreen> {
                                       ),
                                       Expanded(
                                           child: Center(
-                                              child: Text('TAKE A PICTURE')))
+                                              child: Text(
+                                        'TAKE A PICTURE',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      )))
                                     ],
                                   ),
                                 ),
@@ -194,7 +217,11 @@ class _ScanScreenState extends State<ScanScreen> {
                                         ),
                                       ),
                                       Expanded(
-                                          child: Center(child: Text('GALLERY')))
+                                          child: Center(
+                                              child: Text('GALLERY',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold))))
                                     ],
                                   ),
                                 ),
@@ -315,68 +342,70 @@ class _ScanScreenState extends State<ScanScreen> {
                     },
                   )
                 : GridView.builder(
-              itemCount: _scanResultController.scanListData.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: (orientation == Orientation.portrait) ? 2 : 3),
-              itemBuilder: (BuildContext context, int index) {
-                DateTime now = DateTime.parse(_scanResultController
-                    .scanListData[index]['dateTime']
-                    .toString());
-                String formattedDate =
-                DateFormat('yyyy-MM-dd – kk:mm').format(now);
-                return InkWell(
-                  onTap: () {
-                    Get.to(ScannedFilesScreen());
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: kTabListColor,
-                        borderRadius: BorderRadius.circular(15.0)),
-                    margin: EdgeInsets.all(8.0),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            flex: 5,
-                            child: Image.asset(
-                              "assets/images/1.png",
-                              fit: BoxFit.fill,
-                              width: double.infinity,
+                    itemCount: _scanResultController.scanListData.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount:
+                            (orientation == Orientation.portrait) ? 2 : 3),
+                    itemBuilder: (BuildContext context, int index) {
+                      DateTime now = DateTime.parse(_scanResultController
+                          .scanListData[index]['dateTime']
+                          .toString());
+                      String formattedDate =
+                          DateFormat('yyyy-MM-dd – kk:mm').format(now);
+                      return InkWell(
+                        onTap: () {
+                          Get.to(ScannedFilesScreen());
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: kTabListColor,
+                              borderRadius: BorderRadius.circular(15.0)),
+                          margin: EdgeInsets.all(8.0),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Flexible(
+                                  flex: 5,
+                                  child: Image.asset(
+                                    "assets/images/1.png",
+                                    fit: BoxFit.fill,
+                                    width: double.infinity,
+                                  ),
+                                ),
+                                Flexible(
+                                  flex: 1,
+                                  child: Text(
+                                      _scanResultController.scanListData[index]
+                                              ['name']
+                                          .toString(),
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize:
+                                              SizeConfig.blockSizeHorizontal *
+                                                  4,
+                                          fontWeight: FontWeight.bold),
+                                      maxLines: 1),
+                                ),
+                                Flexible(
+                                  flex: 1,
+                                  child: Text(
+                                    "$formattedDate",
+                                    style: TextStyle(color: Colors.white),
+                                    maxLines: 1,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          Flexible(
-                            flex: 1,
-                            child: Text(_scanResultController
-                                .scanListData[index]['name']
-                                .toString(),
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize:
-                                    SizeConfig.blockSizeHorizontal *
-                                        4,
-                                    fontWeight: FontWeight.bold),
-                                maxLines: 1),
-                          ),
-                          Flexible(
-                            flex: 1,
-                            child: Text(
-                              "$formattedDate",
-                              style: TextStyle(color: Colors.white),
-                              maxLines: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
-          /*
+            /*
 
           InkWell(
                         onTap: () {
@@ -428,6 +457,7 @@ class _ScanScreenState extends State<ScanScreen> {
                       ),
           *
           * */
+
             /// My Scan
             Container(),
           ],

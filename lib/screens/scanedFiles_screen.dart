@@ -8,6 +8,7 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:share/share.dart';
 import 'package:sweetalert/sweetalert.dart';
 import 'package:text_recognition_app/models/ScanResult.dart';
+import 'package:text_recognition_app/screens/translate_screen.dart';
 import 'package:text_recognition_app/utilities/size_config.dart';
 import 'package:text_recognition_app/utilities/styles.dart';
 import 'package:pdf/pdf.dart';
@@ -56,7 +57,9 @@ class _ScannedFilesScreenState extends State<ScannedFilesScreen>
                   child: FlatButton(
                     height: 30.0,
                     onPressed: () {
-                      Get.off(ScannedFilesScreen());
+                    //  Get.off(ScannedFilesScreen());
+                    //  print(widget.scannedText);
+                       Get.to(TranslateScreen(textToTranslate: widget.scannedText,));
                     },
                     color: kYellowColor,
                     shape: new RoundedRectangleBorder(

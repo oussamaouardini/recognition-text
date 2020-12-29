@@ -1,9 +1,7 @@
-import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/get_core.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
 import 'package:text_recognition_app/screens/scan_screen.dart';
 import 'package:text_recognition_app/screens/settings_screen.dart';
@@ -17,27 +15,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  /// file to store image
-  File pickedImage;
-
-  bool isImage = false;
-
-  Future pickImage() async {
-    var tempStorage = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      pickedImage = tempStorage;
-      isImage = true;
-    });
-  }
-
-  Future takeImage() async {
-    var tempStorage = await ImagePicker.pickImage(source: ImageSource.camera);
-    setState(() {
-      pickedImage = tempStorage;
-      isImage = true;
-    });
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +24,11 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: kColor,
         body: SingleChildScrollView(
           child: Container(
+            width: double.infinity,
             height: SizeConfig.blockSizeVertical * 100,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Image.asset("assets/images/logo.png",
                     height: SizeConfig.blockSizeVertical * 25),
@@ -68,23 +47,15 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: GoogleFonts.roboto(
                         color: Colors.white,
                         fontSize: SizeConfig.blockSizeHorizontal * 4)),
-                isImage
-                    ? Container(
-                        height: 200,
-                        width: 200,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: FileImage(pickedImage), fit: BoxFit.cover),
-                        ),
-                      )
-                    : Container(),
                 SizedBox(
                   height: SizeConfig.blockSizeVertical * 1,
                 ),
                 Container(
                   width: SizeConfig.blockSizeHorizontal * 40,
                   child: FlatButton(
-                  //  onPressed: pickImage, TODO:
+                    onPressed: (){
+                      Get.to(ScanScreen());
+                    },
                     color: kYellowColor,
                     shape: new RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(30.0)),
@@ -98,9 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Icon(Icons.image),
                           ),
                         ),
-                        Expanded(child: InkWell(onTap:(){
-                          Get.to(ScanScreen());
-                        },child: Center(child: Text('Scan Text'))))
+                        Expanded(child: Center(child: Text('Scan Text',style: TextStyle(fontWeight: FontWeight.bold),)))
                       ],
                     ),
                   ),
@@ -111,7 +80,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 Container(
                   width: SizeConfig.blockSizeHorizontal * 40,
                   child: FlatButton(
-                    onPressed: pickImage,
+                    onPressed: (){
+                      Get.to(TranslateScreen(textToTranslate: null,));
+                    },
                     color: kYellowColor,
                     shape: new RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(30.0)),
@@ -125,9 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Icon(Icons.translate),
                           ),
                         ),
-                        Expanded(child: InkWell(onTap:(){
-                          Get.to(TranslateScreen());
-                        },child: Center(child: Text('Translation'))))
+                        Expanded(child: Center(child: Text('Translation',style: TextStyle(fontWeight: FontWeight.bold),)))
                       ],
                     ),
                   ),
@@ -138,7 +107,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 Container(
                   width: SizeConfig.blockSizeHorizontal * 40,
                   child: FlatButton(
-                    onPressed: pickImage,
+                    onPressed: (){
+                      Get.to(SettingScreen());
+                    },
                     color: kYellowColor,
                     shape: new RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(30.0)),
@@ -154,15 +125,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         Expanded(
                             child: Center(
-                                child: InkWell(
-                          onTap: () {
-                            Get.to(SettingScreen());
-                          },
-                          child: Text(
-                            'Settings',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        )))
+                                child: Text(
+                                  'Settings',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                )))
                       ],
                     ),
                   ),
