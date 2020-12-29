@@ -39,7 +39,7 @@ class ScanResult{
     return res;
   }
   /// Get all Results using raw query
-  Future getAll() async {
+  static Future getAll() async {
     var scanResults = await SqLiteDB().db;
     final res = await scanResults.rawQuery("SELECT * FROM ScanResult");
     return res;

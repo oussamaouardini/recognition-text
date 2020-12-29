@@ -15,7 +15,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -53,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Container(
                   width: SizeConfig.blockSizeHorizontal * 40,
                   child: FlatButton(
-                    onPressed: (){
+                    onPressed: () {
                       Get.to(ScanScreen());
                     },
                     color: kYellowColor,
@@ -69,7 +68,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Icon(Icons.image),
                           ),
                         ),
-                        Expanded(child: Center(child: Text('Scan Text',style: TextStyle(fontWeight: FontWeight.bold),)))
+                        Expanded(
+                            child: Center(
+                                child: Text(
+                          'Scan Text',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        )))
                       ],
                     ),
                   ),
@@ -80,8 +84,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 Container(
                   width: SizeConfig.blockSizeHorizontal * 40,
                   child: FlatButton(
-                    onPressed: (){
-                      Get.to(TranslateScreen(textToTranslate: null,));
+                    onPressed: () {
+                      Get.to(TranslateScreen(
+                        textToTranslate: null,
+                      ));
                     },
                     color: kYellowColor,
                     shape: new RoundedRectangleBorder(
@@ -96,7 +102,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Icon(Icons.translate),
                           ),
                         ),
-                        Expanded(child: Center(child: Text('Translation',style: TextStyle(fontWeight: FontWeight.bold),)))
+                        Expanded(
+                            child: Center(
+                                child: Text(
+                          'Translation',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        )))
                       ],
                     ),
                   ),
@@ -107,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Container(
                   width: SizeConfig.blockSizeHorizontal * 40,
                   child: FlatButton(
-                    onPressed: (){
+                    onPressed: () {
                       Get.to(SettingScreen());
                     },
                     color: kYellowColor,
@@ -126,9 +137,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         Expanded(
                             child: Center(
                                 child: Text(
-                                  'Settings',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                )))
+                          'Settings',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        )))
                       ],
                     ),
                   ),

@@ -18,8 +18,10 @@ import 'package:printing/printing.dart';
 // ignore: must_be_immutable
 class ScannedFilesScreen extends StatefulWidget {
   String scannedText;
+  Function callback;
 
-  ScannedFilesScreen({this.scannedText});
+  /// this function to refresh the savedScans after saving
+  ScannedFilesScreen({this.scannedText, this.callback});
 
   @override
   _ScannedFilesScreenState createState() => _ScannedFilesScreenState();
@@ -57,9 +59,9 @@ class _ScannedFilesScreenState extends State<ScannedFilesScreen>
                   child: FlatButton(
                     height: 30.0,
                     onPressed: () {
-                    //  Get.off(ScannedFilesScreen());
-                    //  print(widget.scannedText);
-                       Get.to(TranslateScreen(textToTranslate: widget.scannedText,));
+                      Get.to(TranslateScreen(
+                        textToTranslate: widget.scannedText,
+                      ));
                     },
                     color: kYellowColor,
                     shape: new RoundedRectangleBorder(
@@ -88,7 +90,7 @@ class _ScannedFilesScreenState extends State<ScannedFilesScreen>
               padding: const EdgeInsets.only(right: 8.0),
               child: DropdownButton<String>(
                 icon: Icon(
-                  Icons.more_horiz ,
+                  Icons.more_horiz,
                   color: Colors.white,
                 ),
                 iconSize: 24,
@@ -103,7 +105,6 @@ class _ScannedFilesScreenState extends State<ScannedFilesScreen>
                   });
 
                   if (dropdownValue == "Save") {
-
                     Alert(
                         context: context,
                         title: "Save File",
@@ -133,6 +134,7 @@ class _ScannedFilesScreenState extends State<ScannedFilesScreen>
                                         "${_textEditingController.text}",
                                         widget.scannedText);
                                     _textEditingController.clear();
+                                    this.widget.callback();
                                     Navigator.pop(context);
                                   }
                                 : null,

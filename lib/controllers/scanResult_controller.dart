@@ -16,7 +16,7 @@ class ScanResultController extends GetxController {
         Duration.zero,
             () => Get.dialog(Center(child: CircularProgressIndicator()),
             barrierDismissible: false));
-    List<Map<String, dynamic>> results =  await ScanResult(null,null).getAll();
+    List<Map<String, dynamic>> results =  await ScanResult.getAll();
     scanListData = results ;
     Get.back();
     return results;
@@ -29,7 +29,6 @@ class ScanResultController extends GetxController {
             barrierDismissible: false));
     await ScanResult.delete(id);
     update();
-    print("updated ----->");
     Get.back();
   }
 

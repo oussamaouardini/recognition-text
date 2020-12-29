@@ -18,9 +18,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      // home: MyHomePage(title: 'Flutter Demo Home Page'),
       home: LoadingScreen(),
-     // home: AnimationTransferScreen(length: 20,),
     );
   }
 }

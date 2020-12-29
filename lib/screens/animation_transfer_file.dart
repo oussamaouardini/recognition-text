@@ -12,8 +12,9 @@ import 'package:text_recognition_app/utilities/styles.dart';
 // ignore: must_be_immutable
 class AnimationTransferScreen extends StatefulWidget {
   File pickedImage;
+  Function callback;
 
-  AnimationTransferScreen({this.pickedImage});
+  AnimationTransferScreen({this.pickedImage, this.callback});
 
   @override
   _AnimationTransferScreenState createState() =>
@@ -49,7 +50,6 @@ class _AnimationTransferScreenState extends State<AnimationTransferScreen> {
   @override
   void initState() {
     readText();
-
     super.initState();
   }
 
@@ -135,7 +135,9 @@ class _AnimationTransferScreenState extends State<AnimationTransferScreen> {
                       width: SizeConfig.blockSizeHorizontal * 40,
                       child: FlatButton(
                         onPressed: () {
-                          Get.off(ScannedFilesScreen(scannedText: scannedText));
+                          Get.off(ScannedFilesScreen(
+                              scannedText: scannedText,
+                              callback: widget.callback));
                         },
                         color: kYellowColor,
                         shape: new RoundedRectangleBorder(
