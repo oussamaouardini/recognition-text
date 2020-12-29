@@ -12,6 +12,7 @@ import 'package:text_recognition_app/screens/animation_transfer_file.dart';
 import 'package:text_recognition_app/screens/scanedFiles_screen.dart';
 import 'package:text_recognition_app/utilities/size_config.dart';
 import 'package:text_recognition_app/utilities/styles.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 class ScanScreen extends StatefulWidget {
   @override
@@ -23,6 +24,9 @@ class _ScanScreenState extends State<ScanScreen> {
   File pickedImage;
   bool isImage = false;
   bool isList = true;
+
+  String errorText = "";
+  TextEditingController _textEditingController = TextEditingController();
 
   Future pickImage() async {
     try {
@@ -71,9 +75,10 @@ class _ScanScreenState extends State<ScanScreen> {
   }
 
   void refresh() async {
-    List<Map<String, dynamic>> temp = await _scanResultController.getResultScan();
+    List<Map<String, dynamic>> temp =
+        await _scanResultController.getResultScan();
     setState(() {
-      _scanResultController.scanListData = temp ;
+      _scanResultController.scanListData = temp;
     });
   }
 
@@ -295,107 +300,170 @@ class _ScanScreenState extends State<ScanScreen> {
             isList
                 ? _scanResultController.scanListData.length > 0
                     ? ListView.builder(
-              itemCount: _scanResultController.scanListData.length,
-              itemBuilder: (context, index) {
-                DateTime now = DateTime.parse(_scanResultController
-                    .scanListData[index]['dateTime']
-                    .toString());
-                String formattedDate =
-                DateFormat('yyyy-MM-dd – kk:mm').format(now);
-                int id =
-                _scanResultController.scanListData[index]['id'];
-                return Container(
-                  margin: const EdgeInsets.only(
-                      left: 8.0, right: 8.0, top: 8.0),
-                  padding: const EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                      color: kTabListColor,
-                      borderRadius: BorderRadius.circular(15.0)),
-                  height: SizeConfig.blockSizeVertical * 13,
-                  child: InkWell(
-                    onTap: () {
-                      Get.to(ScannedFilesScreen());
-                    },
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          "assets/images/1.png",
-                          width: SizeConfig.blockSizeHorizontal * 30,
-                          fit: BoxFit.fill,
-                        ),
-                        Expanded(
-                          child: Container(
-                            margin: const EdgeInsets.only(left: 5.0),
-                            child: Row(
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                          _scanResultController
-                                              .scanListData[index]
-                                          ['name']
-                                              .toString(),
-                                          overflow:
-                                          TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: SizeConfig
-                                                  .blockSizeHorizontal *
-                                                  4.5,
-                                              fontWeight:
-                                              FontWeight.bold),
-                                          maxLines: 1),
-                                      Text(
-                                        formattedDate,
-                                        style: TextStyle(
-                                            color: Colors.white),
-                                      ),
-                                    ],
+                        itemCount: _scanResultController.scanListData.length,
+                        itemBuilder: (context, index) {
+                          DateTime now = DateTime.parse(_scanResultController
+                              .scanListData[index]['dateTime']
+                              .toString());
+                          String formattedDate =
+                              DateFormat('yyyy-MM-dd – kk:mm').format(now);
+                          int id =
+                              _scanResultController.scanListData[index]['id'];
+                          return Container(
+                            margin: const EdgeInsets.only(
+                                left: 8.0, right: 8.0, top: 8.0),
+                            padding: const EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                                color: kTabListColor,
+                                borderRadius: BorderRadius.circular(15.0)),
+                            height: SizeConfig.blockSizeVertical * 13,
+                            child: InkWell(
+                              onTap: () {
+                                Get.to(ScannedFilesScreen());
+                              },
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    "assets/images/1.png",
+                                    width: SizeConfig.blockSizeHorizontal * 30,
+                                    fit: BoxFit.fill,
                                   ),
-                                ),
-                                Column(
-                                  children: [
-                                    Flexible(
-                                      flex: 3,
-                                      child: IconButton(
-                                          icon: Icon(
-                                            Icons.mode_edit,
-                                            color: Colors.green,
+                                  Expanded(
+                                    child: Container(
+                                      margin: const EdgeInsets.only(left: 5.0),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                    _scanResultController
+                                                        .scanListData[index]
+                                                            ['name']
+                                                        .toString(),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: SizeConfig
+                                                                .blockSizeHorizontal *
+                                                            4.5,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                    maxLines: 1),
+                                                Text(
+                                                  formattedDate,
+                                                  style: TextStyle(
+                                                      color: Colors.white),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                          onPressed: () {}),
+                                          Column(
+                                            children: [
+                                              Flexible(
+                                                flex: 3,
+                                                child: IconButton(
+                                                    icon: Icon(
+                                                      Icons.mode_edit,
+                                                      color: Colors.green,
+                                                    ),
+                                                    onPressed: () {
+                                                      _textEditingController
+                                                              .text =
+                                                          _scanResultController
+                                                                  .scanListData[
+                                                              index]['name'];
+                                                      Alert(
+                                                          context: context,
+                                                          title: "Save File",
+                                                          content: Column(
+                                                            children: <Widget>[
+                                                              TextField(
+                                                                controller:
+                                                                    _textEditingController,
+                                                                onChanged:
+                                                                    (value) {
+                                                                  value.length >
+                                                                          3
+                                                                      ? errorText =
+                                                                          ""
+                                                                      : errorText =
+                                                                          "title length must be longer 3 characters";
+                                                                },
+                                                                decoration: InputDecoration(
+                                                                    icon: Icon(Icons
+                                                                        .text_fields),
+                                                                    labelText:
+                                                                        'title',
+                                                                    errorMaxLines:
+                                                                        1,
+                                                                    errorText:
+                                                                        errorText),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          buttons: [
+                                                            DialogButton(
+                                                              onPressed:
+                                                                  errorText ==
+                                                                          ""
+                                                                      ? () {
+                                                                          ScanResult
+                                                                              .update(
+                                                                            id,
+                                                                            "${_textEditingController.text}",
+                                                                          );
+                                                                          _textEditingController
+                                                                              .clear();
+                                                                          Navigator.pop(
+                                                                              context);
+                                                                          refresh();
+                                                                        }
+                                                                      : null,
+                                                              child: Text(
+                                                                "Save",
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontSize:
+                                                                        20),
+                                                              ),
+                                                            )
+                                                          ]).show();
+                                                    }),
+                                              ),
+                                              Flexible(
+                                                flex: 3,
+                                                child: IconButton(
+                                                    icon: Icon(
+                                                      Icons.delete,
+                                                      color: Colors.red,
+                                                    ),
+                                                    onPressed: () {
+                                                      _scanResultController
+                                                          .deleteScan(id);
+                                                      refresh();
+                                                    }),
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                    Flexible(
-                                      flex: 3,
-                                      child: IconButton(
-                                          icon: Icon(
-                                            Icons.delete,
-                                            color: Colors.red,
-                                          ),
-                                          onPressed: () {
-                                            _scanResultController
-                                                .deleteScan(id);
-                                            refresh();
-                                          }),
-                                    )
-                                  ],
-                                )
-                              ],
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              },
-            )
+                          );
+                        },
+                      )
                     : noItem()
                 : _scanResultController.scanListData.length > 0
                     ? GridView.builder(
@@ -500,8 +568,6 @@ class _ScanScreenState extends State<ScanScreen> {
       ),
     );
   }
-
-
 }
 
 class Modal {

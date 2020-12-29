@@ -81,7 +81,7 @@ class _ScannedFilesScreenState extends State<ScannedFilesScreen>
           leading: IconButton(
               icon: Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () {
-                Get.back();
+                Get.back(result: [false]);
               }),
           actions: [
             Padding(
@@ -103,7 +103,7 @@ class _ScannedFilesScreenState extends State<ScannedFilesScreen>
                   });
 
                   if (dropdownValue == "Save") {
-                    ///create database table if it does not exist
+
                     Alert(
                         context: context,
                         title: "Save File",
@@ -129,7 +129,7 @@ class _ScannedFilesScreenState extends State<ScannedFilesScreen>
                           DialogButton(
                             onPressed: errorText == ""
                                 ? () {
-                                    ScanResult(null, null).save(
+                                    ScanResult.save(
                                         "${_textEditingController.text}",
                                         widget.scannedText);
                                     _textEditingController.clear();
