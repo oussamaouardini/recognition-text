@@ -5,10 +5,12 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:sweetalert/sweetalert.dart';
 import 'package:text_recognition_app/blocks/DBProvider_block.dart';
 import 'package:text_recognition_app/controllers/scanResult_controller.dart';
 import 'package:text_recognition_app/models/ScanResult.dart';
 import 'package:text_recognition_app/screens/animation_transfer_file.dart';
+import 'package:text_recognition_app/screens/my-documents_screen.dart';
 import 'package:text_recognition_app/screens/scanedFiles_screen.dart';
 import 'package:text_recognition_app/utilities/size_config.dart';
 import 'package:text_recognition_app/utilities/styles.dart';
@@ -83,6 +85,8 @@ class _ScanScreenState extends State<ScanScreen> {
       _scanResultController.scanListData = temp;
     });
   }
+
+
 
   @override
   void initState() {
@@ -326,10 +330,25 @@ class _ScanScreenState extends State<ScanScreen> {
                               },
                               child: Row(
                                 children: [
-                                  Image.asset(
-                                    "assets/images/1.png",
+                                  Container(
                                     width: SizeConfig.blockSizeHorizontal * 30,
-                                    fit: BoxFit.fill,
+                                    height: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5),
+                                      border: Border.all(color: Colors.grey)
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: Text('${_scanResultController
+                                          .scanListData[index]['textScanned']}',
+                                        maxLines: 20,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                        fontSize: 8.0,
+                                        color: Colors.black
+                                      ),),
+                                    ),
                                   ),
                                   Expanded(
                                     child: Container(
@@ -450,6 +469,24 @@ class _ScanScreenState extends State<ScanScreen> {
                                                       color: Colors.red,
                                                     ),
                                                     onPressed: () {
+                                                      SweetAlert.show(context,
+                                                          subtitle: "Do you want to delete this Record",
+                                                          style: SweetAlertStyle.confirm,
+                                                          showCancelButton: true, onPress: (bool isConfirm) {
+                                                            if(isConfirm){
+                                                              SweetAlert.show(context,subtitle: "Deleting...", style: SweetAlertStyle.loading);
+                                                              new Future.delayed(Duration.zero,()async{
+                                                                _scanResultController
+                                                                    .deleteScan(id);
+                                                                refresh();
+                                                                SweetAlert.show(context,subtitle: "Success!", style: SweetAlertStyle.success);
+                                                              });
+                                                            }else{
+                                                              SweetAlert.show(context,subtitle: "Canceled!", style: SweetAlertStyle.error);
+                                                            }
+                                                            // return false to keep dialog
+                                                            return false;
+                                                          });
                                                       _scanResultController
                                                           .deleteScan(id);
                                                       refresh();
@@ -491,7 +528,7 @@ class _ScanScreenState extends State<ScanScreen> {
                               decoration: BoxDecoration(
                                   color: kTabListColor,
                                   borderRadius: BorderRadius.circular(15.0)),
-                              margin: EdgeInsets.all(8.0),
+                              margin: EdgeInsets.symmetric(horizontal:6.0,vertical: 7.0),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
@@ -499,13 +536,27 @@ class _ScanScreenState extends State<ScanScreen> {
                                       MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-
                                     Flexible(
                                       flex: 4,
-                                      child: Image.asset(
-                                        "assets/images/1.png",
-                                        fit: BoxFit.fill,
+                                      child: Container(
                                         width: double.infinity,
+                                        height: double.infinity,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(5),
+                                            border: Border.all(color: Colors.grey)
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(2.0),
+                                          child: Text('${_scanResultController
+                                              .scanListData[index]['textScanned']}',
+                                            maxLines: 20,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontSize: 8.0,
+                                                color: Colors.black
+                                            ),),
+                                        ),
                                       ),
                                     ),
                                     Flexible(
@@ -538,7 +589,7 @@ class _ScanScreenState extends State<ScanScreen> {
                                                   child: Text(
                                                     "$formattedDate",
                                                     textAlign: TextAlign.center,
-                                                    style: TextStyle(color: Colors.white),
+                                                    style: TextStyle(color: Colors.white,fontSize: SizeConfig.blockSizeHorizontal*3.42),
                                                     maxLines: 2,
                                                   ),
                                                 ),
@@ -629,9 +680,24 @@ class _ScanScreenState extends State<ScanScreen> {
                                                       color: Colors.red,
                                                     ),
                                                     onPressed: () {
-                                                      _scanResultController
-                                                          .deleteScan(id);
-                                                      refresh();
+                                                      SweetAlert.show(context,
+                                                          subtitle: "Do you want to delete this Record",
+                                                          style: SweetAlertStyle.confirm,
+                                                          showCancelButton: true, onPress: (bool isConfirm) {
+                                                            if(isConfirm){
+                                                              SweetAlert.show(context,subtitle: "Deleting...", style: SweetAlertStyle.loading);
+                                                              new Future.delayed(Duration.zero,()async{
+                                                                _scanResultController
+                                                                    .deleteScan(id);
+                                                                refresh();
+                                                                SweetAlert.show(context,subtitle: "Success!", style: SweetAlertStyle.success);
+                                                              });
+                                                            }else{
+                                                              SweetAlert.show(context,subtitle: "Canceled!", style: SweetAlertStyle.error);
+                                                            }
+                                                            // return false to keep dialog
+                                                            return false;
+                                                          });
                                                     }),
                                               )
                                             ],
@@ -649,9 +715,7 @@ class _ScanScreenState extends State<ScanScreen> {
                     : noItem(),
 
             /// My Docuemnts
-            Container(
-              color: Colors.white,
-            ),
+            MyDocumentScreen(),
           ],
         ),
       ),

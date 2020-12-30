@@ -2,6 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+   <!-- Permission options for the `mediaLibrary` group -->
+    <key>NSAppleMusicUsageDescription</key>
+    <string>Music!</string>
+    <key>kTCCServiceMediaLibrary</key>
+    <string>media</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>You can select photos to attach to reports.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>You can take photos to document your job.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>

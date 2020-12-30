@@ -151,6 +151,20 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_file_manager:
+    dependency: "direct main"
+    description:
+      name: flutter_file_manager
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0"
+  flutter_full_pdf_viewer:
+    dependency: "direct main"
+    description:
+      name: flutter_full_pdf_viewer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.6"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -395,6 +409,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.9"
+  permission_handler:
+    dependency: "direct main"
+    description:
+      name: permission_handler
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.1+1"
+  permission_handler_platform_interface:
+    dependency: transitive
+    description:
+      name: permission_handler_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.1"
   petitparser:
     dependency: transitive
     description:
