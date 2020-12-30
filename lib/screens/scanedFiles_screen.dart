@@ -29,15 +29,18 @@ class ScannedFilesScreen extends StatefulWidget {
 
 class _ScannedFilesScreenState extends State<ScannedFilesScreen>
     with SingleTickerProviderStateMixin {
-  /// Map de give IconData to the drop down item icon
-  Map<String, IconData> iconDropDown = {
-    'Save': Icons.save,
-    'Text Settings': Icons.settings,
-  };
+
   String errorText = "";
   String dropdownValue = 'Save';
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   TextEditingController _textEditingController = TextEditingController();
+  bool isDark;
+
+  @override
+  void initState() {
+    isDark = Get.isDarkMode;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +48,9 @@ class _ScannedFilesScreenState extends State<ScannedFilesScreen>
     return SafeArea(
       key: _scaffoldKey,
       child: Scaffold(
-        backgroundColor: kColor,
+        backgroundColor: isDark? kDarkModeLight :kColor,
         appBar: AppBar(
-          backgroundColor: kColor,
+          backgroundColor: isDark? kDarkMode :kColor,
           centerTitle: true,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(40),
@@ -70,9 +73,9 @@ class _ScannedFilesScreenState extends State<ScannedFilesScreen>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          child: Icon(Icons.translate),
+                          child: Icon(Icons.translate, color: Colors.black),
                         ),
-                        Expanded(child: Center(child: Text('Translate')))
+                        Expanded(child: Center(child: Text('Translate',style: TextStyle(color: Colors.black),)))
                       ],
                     ),
                   ),
@@ -86,88 +89,67 @@ class _ScannedFilesScreenState extends State<ScannedFilesScreen>
                 Get.back(result: [false]);
               }),
           actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: DropdownButton<String>(
-                icon: Icon(
-                  Icons.more_horiz,
-                  color: Colors.white,
-                ),
-                iconSize: 24,
-                elevation: 0,
-                dropdownColor: Colors.white,
-                underline: SizedBox(),
-                style:
-                    TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
-                onChanged: (String newValue) async {
-                  setState(() {
-                    dropdownValue = newValue;
-                  });
-
-                  if (dropdownValue == "Save") {
-                    Alert(
-                        context: context,
-                        title: "Save File",
-                        content: Column(
-                          children: <Widget>[
-                            TextField(
-                              controller: _textEditingController,
-                              onChanged: (value) {
-                                value.length > 3
-                                    ? errorText = ""
-                                    : errorText =
-                                        "title length must be longer 3 characters";
-                              },
-                              decoration: InputDecoration(
-                                  icon: Icon(Icons.text_fields),
-                                  labelText: 'title',
-                                  errorMaxLines: 1,
-                                  errorText: errorText),
-                            ),
-                          ],
-                        ),
-                        buttons: [
-                          DialogButton(
-                            onPressed: errorText == ""
-                                ? () {
-                                    ScanResult.save(
-                                        "${_textEditingController.text}",
-                                        widget.scannedText);
-                                    _textEditingController.clear();
-                                    this.widget.callback();
-                                    Navigator.pop(context);
-                                  }
-                                : null,
-                            child: Text(
-                              "Save",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 20),
-                            ),
-                          )
-                        ]).show();
-                  }
-                },
-                items: <String>['Save', 'Text Settings']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Icon(
-                          iconDropDown[value],
-                          color: Colors.grey,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 4.0),
-                          child: Text(value),
+            IconButton(
+              onPressed: (){
+                Alert(
+                    context: context,
+                    title: "Save File",
+                    style: AlertStyle(
+                      titleStyle: TextStyle(
+                        color: isDark?Colors.white:Colors.black
+                      )
+                    ),
+                    content: Column(
+                      children: <Widget>[
+                        TextField(
+                          controller: _textEditingController,
+                          onChanged: (value) {
+                            value.length > 3
+                                ? errorText = ''
+                                : errorText =
+                            "title length must be longer 3 characters";
+                          },
+                          decoration: InputDecoration(
+                              icon: Icon(Icons.text_fields),
+                              labelText: 'title',
+                              errorMaxLines: 1,
+                              errorText: errorText,
+                            errorStyle: TextStyle(color: Colors.red)
+                          ),
                         ),
                       ],
                     ),
-                  );
-                }).toList(),
+                    buttons: [
+                      DialogButton(
+                        onPressed: errorText == ""
+                            ? () {
+
+                            if(_textEditingController.text.length>3){
+                              ScanResult.save(
+                                  "${_textEditingController.text}",
+                                  widget.scannedText);
+                              _textEditingController.clear();
+                              this.widget.callback();
+                              Navigator.pop(context);
+                            }
+
+
+                        }
+                            : null,
+                        color:Colors.grey,
+                        child: Text(
+                          "Save",
+                          style:
+                          TextStyle(color: Colors.white, fontSize: 20),
+                        ),
+                      )
+                    ]).show();
+              },
+              icon:Icon(
+                Icons.save,
               ),
-            )
+            ),
+
           ],
           title: Text("Scan Results", style: GoogleFonts.poppins()),
           elevation: 0.0,
@@ -177,7 +159,7 @@ class _ScannedFilesScreenState extends State<ScannedFilesScreen>
               height: SizeConfig.blockSizeVertical * 90,
               width: double.infinity,
               decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: isDark? kDarkModeLight :Colors.white,
                   borderRadius:
                       BorderRadius.only(topLeft: Radius.circular(20))),
               child: Column(
@@ -222,7 +204,8 @@ class _ScannedFilesScreenState extends State<ScannedFilesScreen>
                 child: Icon(Icons.picture_as_pdf),
                 backgroundColor: Colors.red,
                 label: 'PDF',
-                labelStyle: TextStyle(fontSize: 18.0),
+                labelStyle: TextStyle(fontSize: 18.0, color: Colors.white),
+                labelBackgroundColor: Colors.grey,
                 onTap: () async {
                   try {
                     final pdf = pw.Document();
@@ -255,7 +238,8 @@ class _ScannedFilesScreenState extends State<ScannedFilesScreen>
               child: Icon(Icons.share),
               backgroundColor: Colors.green,
               label: 'Share',
-              labelStyle: TextStyle(fontSize: 18.0),
+              labelStyle: TextStyle(fontSize: 18.0, color: Colors.white),
+              labelBackgroundColor: Colors.grey,
               onTap: () {
                 final RenderBox box = context.findRenderObject();
                 Share.share("${widget.scannedText}",

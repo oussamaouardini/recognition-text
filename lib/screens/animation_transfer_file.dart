@@ -24,6 +24,7 @@ class AnimationTransferScreen extends StatefulWidget {
 class _AnimationTransferScreenState extends State<AnimationTransferScreen> {
   bool isLoading = true;
   String scannedText = '';
+  bool isDark;
 
   Future readText() async {
     setState(() {
@@ -50,6 +51,7 @@ class _AnimationTransferScreenState extends State<AnimationTransferScreen> {
   @override
   void initState() {
     readText();
+    isDark = Get.isDarkMode;
     super.initState();
   }
 
@@ -58,7 +60,7 @@ class _AnimationTransferScreenState extends State<AnimationTransferScreen> {
     SizeConfig().init(context);
     return SafeArea(
       child: Scaffold(
-        backgroundColor: kColor,
+        backgroundColor: isDark? kDarkModeLight :kColor,
         body: Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <
               Widget>[
@@ -147,9 +149,9 @@ class _AnimationTransferScreenState extends State<AnimationTransferScreen> {
                           children: [
                             Container(
                               width: SizeConfig.blockSizeHorizontal * 10,
-                              child: Icon(Icons.image),
+                              child: Icon(Icons.image, color: Colors.black),
                             ),
-                            Expanded(child: Center(child: Text('See Results')))
+                            Expanded(child: Center(child: Text('See Results',style: TextStyle(color: Colors.black),)))
                           ],
                         ),
                       ),

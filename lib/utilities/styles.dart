@@ -11,6 +11,11 @@ Color kTextColor = Color(0xff00c4e6);
 Color kActiveTabColor = Color(0xff015B6C);
 Color kTabListColor = Color(0xff015E6F);
 Color kUnselectedTabColor = Color(0xff0E99AE);
+Color kDarkMode = Color(0xff242526);
+Color kDarkModeLight = Color(0xff2D2D2D);
+Color kDarkMode2 = Color(0xff18191A);
+Color kDarkModeLight2 = Color(0xff242526);
+
 
 final kTitleStyle = GoogleFonts.sansita(
   textStyle: TextStyle(

@@ -20,6 +20,7 @@ class _TranslateScreenState extends State<TranslateScreen>
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String dropdownValue1 = 'Automatic';
   String dropdownValue2 = 'English';
+  bool isDark ;
   List<String> sourceLanguages = [
     'Automatic',
     'English',
@@ -88,7 +89,7 @@ class _TranslateScreenState extends State<TranslateScreen>
   void initState() {
     _textEditingController1 = TextEditingController();
     _textEditingController2 = TextEditingController();
-
+    isDark = Get.isDarkMode;
     /// Initialise the text
     if (widget.textToTranslate != null) {
       _textEditingController1.text = widget.textToTranslate;
@@ -114,14 +115,14 @@ class _TranslateScreenState extends State<TranslateScreen>
             translate();
           },
           child: loading == false
-              ? Icon(Icons.translate)
+              ? Icon(Icons.translate,color: Colors.white,)
               : CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
-          backgroundColor: Color(0xff01B0CD),
+          backgroundColor: isDark? kDarkMode :kColor,
         ),
-        backgroundColor: kColor,
+        backgroundColor: isDark? kDarkMode :kColor,
         appBar: AppBar(
-          backgroundColor: kColor,
+          backgroundColor: isDark? kDarkMode :kColor,
           centerTitle: true,
           bottom: PreferredSize(
               preferredSize: const Size.fromHeight(60),
@@ -129,7 +130,7 @@ class _TranslateScreenState extends State<TranslateScreen>
                 margin: EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: Color(0xff01B0CD),
+                  color: isDark? Colors.grey.shade600:Color(0xff01B0CD),
                 ),
                 height: 40,
                 width: SizeConfig.blockSizeHorizontal * 80,
@@ -239,7 +240,7 @@ class _TranslateScreenState extends State<TranslateScreen>
               height: SizeConfig.blockSizeVertical * 90,
               width: double.infinity,
               decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: isDark? kDarkModeLight:Colors.white,
                   borderRadius:
                       BorderRadius.only(topLeft: Radius.circular(20))),
               child: Padding(

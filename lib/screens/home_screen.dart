@@ -15,12 +15,25 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool isDark;
+
+  refreshTheme(bool t){
+    setState(() {
+      isDark = t;
+    });
+  }
+
+  @override
+  void initState() {
+    isDark = Get.isDarkMode;
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return SafeArea(
       child: Scaffold(
-        backgroundColor: kColor,
+        backgroundColor:isDark?kDarkModeLight :kColor,
         body: SingleChildScrollView(
           child: Container(
             width: double.infinity,
@@ -65,14 +78,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           width: SizeConfig.blockSizeHorizontal * 10,
                           child: Padding(
                             padding: const EdgeInsets.only(right: 4.0),
-                            child: Icon(Icons.image),
+                            child: Icon(Icons.image, color: Colors.black),
                           ),
                         ),
                         Expanded(
                             child: Center(
                                 child: Text(
                           'Scan Text',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
                         )))
                       ],
                     ),
@@ -99,14 +112,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           width: SizeConfig.blockSizeHorizontal * 10,
                           child: Padding(
                             padding: const EdgeInsets.only(right: 4.0),
-                            child: Icon(Icons.translate),
+                            child: Icon(Icons.translate, color: Colors.black),
                           ),
                         ),
                         Expanded(
                             child: Center(
                                 child: Text(
                           'Translation',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
                         )))
                       ],
                     ),
@@ -119,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   width: SizeConfig.blockSizeHorizontal * 40,
                   child: FlatButton(
                     onPressed: () {
-                      Get.to(SettingScreen());
+                      Get.to(SettingScreen(callback: refreshTheme));
                     },
                     color: kYellowColor,
                     shape: new RoundedRectangleBorder(
@@ -131,14 +144,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           width: SizeConfig.blockSizeHorizontal * 10,
                           child: Padding(
                             padding: const EdgeInsets.only(right: 4.0),
-                            child: Icon(Icons.settings),
+                            child: Icon(Icons.settings, color: Colors.black),
                           ),
                         ),
                         Expanded(
                             child: Center(
                                 child: Text(
                           'Settings',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
                         )))
                       ],
                     ),

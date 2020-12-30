@@ -30,6 +30,8 @@ class _ScanScreenState extends State<ScanScreen> {
   String errorText = "";
   TextEditingController _textEditingController = TextEditingController();
 
+  bool isDark;
+
   Future pickImage() async {
     try {
       var tempStorage =
@@ -90,6 +92,7 @@ class _ScanScreenState extends State<ScanScreen> {
 
   @override
   void initState() {
+    isDark = Get.isDarkMode;
     initTables();
     super.initState();
   }
@@ -129,7 +132,7 @@ class _ScanScreenState extends State<ScanScreen> {
                           height: MediaQuery.of(context).size.height,
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: isDark?kDarkModeLight:Colors.white,
                             borderRadius: BorderRadius.vertical(
                               top: Radius.circular(10),
                             ),
@@ -201,7 +204,7 @@ class _ScanScreenState extends State<ScanScreen> {
                                         child: Padding(
                                           padding:
                                               const EdgeInsets.only(right: 4.0),
-                                          child: Icon(Icons.camera_alt),
+                                          child: Icon(Icons.camera_alt, color:Colors.black),
                                         ),
                                       ),
                                       Expanded(
@@ -209,7 +212,7 @@ class _ScanScreenState extends State<ScanScreen> {
                                               child: Text(
                                         'TAKE A PICTURE',
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                            fontWeight: FontWeight.bold, color:Colors.black),
                                       )))
                                     ],
                                   ),
@@ -232,7 +235,7 @@ class _ScanScreenState extends State<ScanScreen> {
                                         child: Padding(
                                           padding:
                                               const EdgeInsets.only(right: 4.0),
-                                          child: Icon(Icons.image),
+                                          child: Icon(Icons.image, color:Colors.black),
                                         ),
                                       ),
                                       Expanded(
@@ -240,7 +243,7 @@ class _ScanScreenState extends State<ScanScreen> {
                                               child: Text('GALLERY',
                                                   style: TextStyle(
                                                       fontWeight:
-                                                          FontWeight.bold))))
+                                                          FontWeight.bold, color:Colors.black ))))
                                     ],
                                   ),
                                 ),
@@ -262,7 +265,7 @@ class _ScanScreenState extends State<ScanScreen> {
           ),
         ),
         appBar: AppBar(
-          backgroundColor: kColor,
+          backgroundColor: isDark? kDarkMode :kColor,
           elevation: 0.0,
           leading: IconButton(
               icon: Icon(Icons.arrow_back),
@@ -271,7 +274,7 @@ class _ScanScreenState extends State<ScanScreen> {
               }),
           actions: [
             IconButton(
-                icon: isList == true
+                icon: !isList == true
                     ? Icon(Icons.view_list)
                     : Icon(Icons.grid_view),
                 onPressed: () {
@@ -449,6 +452,7 @@ class _ScanScreenState extends State<ScanScreen> {
                                                                           refresh();
                                                                         }
                                                                       : null,
+                                                              color:Colors.grey,
                                                               child: Text(
                                                                 "Save",
                                                                 style: TextStyle(
@@ -487,8 +491,6 @@ class _ScanScreenState extends State<ScanScreen> {
                                                             // return false to keep dialog
                                                             return false;
                                                           });
-                                                      _scanResultController
-                                                          .deleteScan(id);
                                                       refresh();
                                                     }),
                                               )
@@ -659,6 +661,7 @@ class _ScanScreenState extends State<ScanScreen> {
                                                                 refresh();
                                                               }
                                                                   : null,
+                                                              color:Colors.grey,
                                                               child: Text(
                                                                 "Save",
                                                                 style: TextStyle(
@@ -725,12 +728,12 @@ class _ScanScreenState extends State<ScanScreen> {
   Widget noItem() {
     return Container(
       width: double.infinity,
-      color: Colors.white,
+      color: isDark? kDarkModeLight :Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset("assets/images/no-scan.png"),
+          Image.asset("assets/images/noscan.png"),
           Text("Sorry",
               style: GoogleFonts.share(
                   color: Color(0xff045E91),
@@ -749,135 +752,4 @@ class _ScanScreenState extends State<ScanScreen> {
   }
 }
 
-class Modal {
-  mainBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return Container(
-          height: SizeConfig.blockSizeVertical * 35,
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: Stack(
-            alignment: AlignmentDirectional.topCenter,
-            children: <Widget>[
-              Positioned(
-                top: MediaQuery.of(context).size.height / 25,
-                left: 0,
-                child: Container(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(10),
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: MediaQuery.of(context).size.height / 2 - 340,
-                left: 0.0,
-                child: Container(
-                  width: SizeConfig.blockSizeHorizontal * 100,
-                  height: SizeConfig.blockSizeVertical * 100,
-                  child: SingleChildScrollView(
-                      child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          width: SizeConfig.blockSizeHorizontal * 90,
-                          height: SizeConfig.blockSizeVertical * 5,
-                          child: Row(
-                            children: <Widget>[
-                              SizedBox(
-                                width: SizeConfig.blockSizeHorizontal * 3,
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Container(
-                                    child: Text(
-                                  "Cancel",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.redAccent,
-                                      fontSize: 14),
-                                )),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      Text(
-                        "Import an image to be converted",
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        style: GoogleFonts.poppins(
-                            textStyle: TextStyle(color: Colors.grey)),
-                      ),
-                      SizedBox(
-                        height: SizeConfig.blockSizeVertical * 1,
-                      ),
-                      Container(
-                        width: SizeConfig.blockSizeHorizontal * 50,
-                        child: FlatButton(
-                          onPressed: () {},
-                          color: kYellowColor,
-                          shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(30.0)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: SizeConfig.blockSizeHorizontal * 10,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 4.0),
-                                  child: Icon(Icons.camera_alt),
-                                ),
-                              ),
-                              Expanded(
-                                  child: Center(child: Text('TAKE A PICTURE')))
-                            ],
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: SizeConfig.blockSizeHorizontal * 50,
-                        child: FlatButton(
-                          onPressed: () {},
-                          color: kYellowColor,
-                          shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(30.0)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: SizeConfig.blockSizeHorizontal * 10,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 4.0),
-                                  child: Icon(Icons.image),
-                                ),
-                              ),
-                              Expanded(child: Center(child: Text('GALLERY')))
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
+

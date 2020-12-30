@@ -3,6 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_file_manager/flutter_file_manager.dart';
 import 'package:flutter_full_pdf_viewer/full_pdf_viewer_scaffold.dart';
+import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:text_recognition_app/utilities/size_config.dart';
@@ -78,7 +79,6 @@ class _MyDocumentScreenState extends State<MyDocumentScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: Colors.white,
         child: files == null
             ? Center(child: Text("Searching Files"))
             : files.length > 0
@@ -130,21 +130,32 @@ class _MyDocumentScreenState extends State<MyDocumentScreen> {
   }
 }
 
-class ViewPDF extends StatelessWidget {
+class ViewPDF extends StatefulWidget {
   String pathPDF = "";
 
   ViewPDF({this.pathPDF});
 
+  @override
+  _ViewPDFState createState() => _ViewPDFState();
+}
+
+class _ViewPDFState extends State<ViewPDF> {
+  bool isDark;
+  @override
+  void initState() {
+    isDark = Get.isDarkMode;
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return PDFViewerScaffold(
         //view PDF
         appBar: AppBar(
           title: Text("Document"),
-          backgroundColor: kColor,
+          backgroundColor: isDark? kDarkMode:kColor,
           elevation: 0.0,
           centerTitle: true,
         ),
-        path: pathPDF);
+        path: widget.pathPDF);
   }
 }
