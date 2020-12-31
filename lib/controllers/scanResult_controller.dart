@@ -12,24 +12,33 @@ class ScanResultController extends GetxController {
   }
 
   Future<List<Map<String, dynamic>>>  getResultScan() async {
-    Future.delayed(
-        Duration.zero,
-            () => Get.dialog(Center(child: CircularProgressIndicator()),
-            barrierDismissible: false));
-    List<Map<String, dynamic>> results =  await ScanResult.getAll();
-    scanListData = results ;
-    Get.back();
-    return results;
+    try{
+      Future.delayed(
+          Duration.zero,
+              () => Get.dialog(Center(child: CircularProgressIndicator()),
+              barrierDismissible: false));
+      List<Map<String, dynamic>> results =  await ScanResult.getAll();
+      scanListData = results ;
+      Get.back();
+      return results;
+    }catch(e){
+      Get.back();
+      return List.empty();
+    }
   }
 
    void  deleteScan(int id) async {
-    Future.delayed(
-        Duration.zero,
-            () => Get.dialog(Center(child: CircularProgressIndicator()),
-            barrierDismissible: false));
-    await ScanResult.delete(id);
-    update();
-    Get.back();
+    try{
+      Future.delayed(
+          Duration.zero,
+              () => Get.dialog(Center(child: CircularProgressIndicator()),
+              barrierDismissible: false));
+      await ScanResult.delete(id);
+      update();
+      Get.back();
+    }catch(e){
+      Get.back();
+    }
   }
 
   @override

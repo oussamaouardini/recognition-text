@@ -76,7 +76,9 @@ class _ScanScreenState extends State<ScanScreen> {
         ScanResult(null, null).createResultsTable();
       } catch (e) {}
     }
-    _scanResultController.getResultScan();
+    try{
+      _scanResultController.getResultScan();
+    }catch (e) {}
     setState(() {});
   }
 
