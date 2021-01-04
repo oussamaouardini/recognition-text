@@ -6,6 +6,7 @@ import 'package:flutter_full_pdf_viewer/full_pdf_viewer_scaffold.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:sweetalert/sweetalert.dart';
 import 'package:text_recognition_app/utilities/size_config.dart';
 import 'package:text_recognition_app/utilities/styles.dart';
 
@@ -20,20 +21,36 @@ class _MyDocumentScreenState extends State<MyDocumentScreen> {
   bool externalStoragePermissionOkay = false;
 
   openPDF() async {
-    initialisePermission();
-    if(externalStoragePermissionOkay == true){
-      FilePickerResult result = await FilePicker.platform.pickFiles() ;
-      if(result != null) {
-      //  File file = File(result.files.single.path);
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) {
-              return ViewPDF(
-                  pathPDF: result.files.single.path);
-              //open viewPDF page on click
-            }));
-      } else {
-        // User canceled the picker
+    try{
+      initialisePermission();
+      if(externalStoragePermissionOkay == true){
+        FilePickerResult result = await FilePicker.platform.pickFiles() ;
+        if(result != null) {
+          //  temp last to check if it is a pdf
+          List tmp = result.files.single.path.split(".");
+          if(tmp.last == "pdf"){
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) {
+                  return ViewPDF(
+                      pathPDF: result.files.single.path);
+                  //open viewPDF page on click
+                }));
+          }else{
+            /// not a PDF
+            SweetAlert.show(context,
+                title: "Error !!!",
+                subtitle: "You need to pick a PDF file");
+          }
+
+        } else {
+          // User canceled the picker
+        }
       }
+    }catch(e){
+      /// catch error
+      SweetAlert.show(context,
+          title: "Oops !!!",
+          subtitle: "An error occurred");
     }
   }
 
