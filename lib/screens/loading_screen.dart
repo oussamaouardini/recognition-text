@@ -1,3 +1,4 @@
+import 'package:after_layout/after_layout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,21 +13,15 @@ class LoadingScreen extends StatefulWidget {
   _LoadingScreenState createState() => _LoadingScreenState();
 }
 
-class _LoadingScreenState extends State<LoadingScreen> {
+class _LoadingScreenState extends State<LoadingScreen> with AfterLayoutMixin<LoadingScreen> {
   @override
   void initState() {
-    navigate();
     super.initState();
-  }
-
-  void navigate() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    bool seen = preferences.getBool("seen");
-    seen == true ? Get.offAll(MyHomePage()) : Get.offAll(OnBoardScreen());
   }
 
   @override
   Widget build(BuildContext context) {
+
     SizeConfig().init(context);
     return SafeArea(
       child: Scaffold(
@@ -45,5 +40,13 @@ class _LoadingScreenState extends State<LoadingScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  Future<void> afterFirstLayout(BuildContext context) async {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>MyHomePage()));
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    bool seen = preferences.getBool("seen");
+    seen == true ? Get.offAll(MyHomePage()) : Get.offAll(OnBoardScreen());
   }
 }
