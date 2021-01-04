@@ -44,7 +44,6 @@ class _LoadingScreenState extends State<LoadingScreen> with AfterLayoutMixin<Loa
 
   @override
   Future<void> afterFirstLayout(BuildContext context) async {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>MyHomePage()));
     SharedPreferences preferences = await SharedPreferences.getInstance();
     bool seen = preferences.getBool("seen");
     seen == true ? Get.offAll(MyHomePage()) : Get.offAll(OnBoardScreen());
